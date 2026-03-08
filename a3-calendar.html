@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calendrier A3 - 3 mois par page</title>
+    <style>
+      :root {
+        --paper: #f4f4ef;
+        --ink: #2a2a2a;
+        --muted: #666;
+        --line: #5e5e5e;
+        --line-soft: #b4b4b4;
+        --accent: #c53333;
+        --panel: #102a43;
+        --panel-ink: #f0f4f8;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family:
+          "Avenir Next Condensed", "Gill Sans", "Trebuchet MS", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(
+            1200px 700px at 15% 5%,
+            #ffffff 0%,
+            #edf1f5 45%,
+            #dce3ea 100%
+          ),
+          repeating-linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.02) 0px,
+            rgba(0, 0, 0, 0.02) 1px,
+            rgba(255, 255, 255, 0) 1px,
+            rgba(255, 255, 255, 0) 6px
+          );
+        min-height: 100vh;
+        padding: 16px;
+      }
+
+      .controls {
+        max-width: 297mm;
+        margin: 0 auto 12px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: linear-gradient(145deg, #163a59, var(--panel));
+        color: var(--panel-ink);
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 10px 22px rgba(16, 42, 67, 0.28);
+        animation: slideDown 500ms ease-out;
+      }
+
+      .controls label {
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        font-size: 13px;
+      }
+
+      .controls input,
+      .controls select,
+      .controls button {
+        font: inherit;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        padding: 7px 10px;
+      }
+
+      .controls input {
+        width: 100px;
+        color: #0f172a;
+        background: #f8fafc;
+      }
+
+      .controls select {
+        color: #0f172a;
+        background: #f8fafc;
+        min-width: 290px;
+      }
+
+      .controls button {
+        color: #ffffff;
+        background: linear-gradient(130deg, #b33d24, #8f2f1b);
+        border-color: rgba(255, 255, 255, 0.35);
+        cursor: pointer;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        transition:
+          transform 140ms ease,
+          filter 140ms ease;
+      }
+
+      .controls button:hover {
+        transform: translateY(-1px);
+        filter: brightness(1.06);
+      }
+
+      .infoBox {
+        max-width: 297mm;
+        margin: 0 auto 12px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid #b9c2cf;
+        background: linear-gradient(180deg, #f9fbff 0%, #eef3fa 100%);
+        color: #1f2937;
+        box-shadow: 0 6px 14px rgba(31, 41, 55, 0.12);
+      }
+
+      .infoBoxTitle {
+        margin: 0 0 6px;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .infoBox ul {
+        margin: 0;
+        padding-left: 18px;
+      }
+
+      .infoBox li {
+        margin: 2px 0;
+      }
+
+      #calendarRoot {
+        display: grid;
+        gap: 16px;
+        justify-items: center;
+      }
+
+      .page {
+        width: 297mm;
+        min-height: 420mm;
+        padding: 9mm;
+        border: 1px solid #adb5bd;
+        border-radius: 3mm;
+        background:
+          linear-gradient(180deg, #f8f8f3 0%, var(--paper) 100%),
+          repeating-linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.03) 0px,
+            rgba(0, 0, 0, 0.03) 1px,
+            rgba(255, 255, 255, 0) 1px,
+            rgba(255, 255, 255, 0) 10px
+          );
+        box-shadow: 0 18px 28px rgba(25, 35, 52, 0.18);
+        display: grid;
+        grid-template-rows: repeat(3, 1fr);
+        gap: 8mm;
+        animation: revealPage 420ms ease both;
+      }
+
+      .month {
+        display: grid;
+        grid-template-rows: auto auto 1fr;
+        border: 1px solid #9ca3af;
+        background: rgba(255, 255, 255, 0.82);
+        overflow: hidden;
+      }
+
+      .yearLine {
+        border-bottom: 1px solid #8c8c8c;
+        padding: 1.8mm 2.2mm 1.2mm;
+        font-size: 7.8mm;
+        line-height: 1;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+      }
+
+      .monthTitle {
+        border-bottom: 1px solid #8c8c8c;
+        padding: 1.3mm 2.2mm;
+        display: grid;
+        grid-template-columns: 16mm 1fr;
+        align-items: end;
+        gap: 3mm;
+      }
+
+      .weekLabel {
+        font-size: 2.8mm;
+        color: #444;
+        line-height: 1.12;
+        font-weight: 600;
+      }
+
+      .monthName {
+        font-size: 6.5mm;
+        line-height: 1;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+      }
+
+      thead th {
+        border-bottom: 1px solid var(--line);
+        border-right: 1px solid var(--line-soft);
+        padding: 1.1mm 0.4mm 0.9mm;
+        font-size: 2.45mm;
+        line-height: 1.06;
+        color: #3f3f46;
+        font-weight: 600;
+        text-align: center;
+        vertical-align: bottom;
+        background: #f1f1ec;
+      }
+
+      thead th:last-child {
+        border-right: none;
+      }
+
+      tbody td {
+        border-bottom: 1px solid var(--line-soft);
+        border-right: 1px solid var(--line-soft);
+        text-align: center;
+        vertical-align: middle;
+        height: 9.5mm;
+        font-weight: 700;
+        font-size: 6.8mm;
+        line-height: 1;
+        color: #2b2b2b;
+        letter-spacing: 0.015em;
+      }
+
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      tbody td:last-child {
+        border-right: none;
+      }
+
+      td.weekNumber {
+        width: 16mm;
+        font-size: 6.2mm;
+        color: #4b5563;
+        font-weight: 500;
+        background: #f8f8f4;
+      }
+
+      td.outsideMonth {
+        color: transparent;
+        user-select: none;
+      }
+
+      td.sunday,
+      td.holiday {
+        color: var(--accent);
+      }
+
+      td.holiday {
+        text-decoration: underline;
+        text-decoration-thickness: 0.35mm;
+        text-underline-offset: 0.55mm;
+      }
+
+      @media (max-width: 960px) {
+        body {
+          padding: 8px;
+        }
+
+        .controls {
+          max-width: 100%;
+        }
+
+        .page {
+          width: 100%;
+          min-height: auto;
+          aspect-ratio: 297 / 420;
+        }
+      }
+
+      @media print {
+        @page {
+          size: A3 portrait;
+          margin: 0;
+        }
+
+        html,
+        body {
+          width: 297mm;
+          height: 420mm;
+        }
+
+        body {
+          margin: 0;
+          padding: 0;
+          background: #fff;
+        }
+
+        .controls {
+          display: none;
+        }
+
+        .infoBox {
+          display: none;
+        }
+
+        #calendarRoot {
+          display: block;
+        }
+
+        .page {
+          width: 297mm;
+          height: 420mm;
+          min-height: 420mm;
+          margin: 0;
+          border: none;
+          border-radius: 0;
+          box-shadow: none;
+          break-after: page;
+          page-break-after: always;
+        }
+
+        .page:last-child {
+          page-break-after: auto;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+
+      @keyframes revealPage {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="controls">
+      <label for="yearInput">Annee</label>
+      <input id="yearInput" type="number" min="1900" max="2100" step="1" />
+      <label for="modeInput">Mode</label>
+      <select id="modeInput">
+        <option value="glissant" selected>
+          3 mois glissants sur 2 ans (fev-mar-avr ... nov-dec-jan)
+        </option>
+        <option value="trimestre">
+          Trimestres fixes (jan-fev-mar, avr-mai-juin...)
+        </option>
+      </select>
+      <button id="buildBtn" type="button">Generer calendrier</button>
+      <button id="printBtn" type="button">Imprimer / Exporter PDF</button>
+    </div>
+
+    <aside class="infoBox" aria-live="polite">
+      <p class="infoBoxTitle">
+        Pour un resultat parfait dans la fenetre d'impression :
+      </p>
+      <ul>
+        <li>Format papier : A3</li>
+        <li>Orientation : Portrait</li>
+        <li>Echelle : 100% (pas "Ajuster a la page")</li>
+      </ul>
+    </aside>
+
+    <main id="calendarRoot" aria-live="polite"></main>
+
+    <script>
+      const monthNames = [
+        "Janvier",
+        "Fevrier",
+        "Mars",
+        "Avril",
+        "Mai",
+        "Juin",
+        "Juillet",
+        "Aout",
+        "Septembre",
+        "Octobre",
+        "Novembre",
+        "Decembre",
+      ];
+
+      const weekdays = [
+        "Lundi",
+        "Mardi",
+        "Mercredi",
+        "Jeudi",
+        "Vendredi",
+        "Samedi",
+        "Dimanche",
+      ];
+
+      const GLISSANT_HORIZON_YEARS = 2;
+
+      // Jours feries principaux (France) + fetes mobiles calculees depuis Paques.
+      function buildHolidaySet(year) {
+        const set = new Set([
+          "01-01",
+          "05-01",
+          "05-08",
+          "07-14",
+          "08-15",
+          "11-01",
+          "11-11",
+          "12-25",
+        ]);
+
+        const easterSunday = getEasterSunday(year);
+        const offsets = [-2, 1, 39, 50, 60];
+        offsets.forEach((offset) => {
+          const d = new Date(easterSunday);
+          d.setDate(d.getDate() + offset);
+          set.add(formatMonthDay(d));
+        });
+
+        return set;
+      }
+
+      function getEasterSunday(year) {
+        const a = year % 19;
+        const b = Math.floor(year / 100);
+        const c = year % 100;
+        const d = Math.floor(b / 4);
+        const e = b % 4;
+        const f = Math.floor((b + 8) / 25);
+        const g = Math.floor((b - f + 1) / 3);
+        const h = (19 * a + b - d - g + 15) % 30;
+        const i = Math.floor(c / 4);
+        const k = c % 4;
+        const l = (32 + 2 * e + 2 * i - h - k) % 7;
+        const m = Math.floor((a + 11 * h + 22 * l) / 451);
+        const month = Math.floor((h + l - 7 * m + 114) / 31);
+        const day = ((h + l - 7 * m + 114) % 31) + 1;
+        return new Date(year, month - 1, day);
+      }
+
+      function formatMonthDay(date) {
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${month}-${day}`;
+      }
+
+      function isoWeekNumber(date) {
+        const copy = new Date(
+          Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
+        );
+        const weekday = copy.getUTCDay() || 7;
+        copy.setUTCDate(copy.getUTCDate() + 4 - weekday);
+        const yearStart = new Date(Date.UTC(copy.getUTCFullYear(), 0, 1));
+        return Math.ceil(((copy - yearStart) / 86400000 + 1) / 7);
+      }
+
+      function mondayStart(date) {
+        const d = new Date(date);
+        const day = (d.getDay() + 6) % 7;
+        d.setDate(d.getDate() - day);
+        d.setHours(0, 0, 0, 0);
+        return d;
+      }
+
+      function getHolidaySetForYear(year, holidayByYear) {
+        if (!holidayByYear[year]) {
+          holidayByYear[year] = buildHolidaySet(year);
+        }
+        return holidayByYear[year];
+      }
+
+      function buildMonthTable(baseYear, absoluteMonthIndex, holidayByYear) {
+        const firstDay = new Date(baseYear, absoluteMonthIndex, 1);
+        const monthYear = firstDay.getFullYear();
+        const monthOnly = firstDay.getMonth();
+        const lastDay = new Date(monthYear, monthOnly + 1, 0);
+        const weekStart = mondayStart(firstDay);
+
+        const table = document.createElement("table");
+        const thead = document.createElement("thead");
+        const headerRow = document.createElement("tr");
+
+        const weekHead = document.createElement("th");
+        weekHead.textContent = "Semaine";
+        headerRow.appendChild(weekHead);
+
+        weekdays.forEach((w) => {
+          const th = document.createElement("th");
+          th.textContent = w;
+          headerRow.appendChild(th);
+        });
+
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        const tbody = document.createElement("tbody");
+        const cursor = new Date(weekStart);
+
+        while (cursor <= lastDay) {
+          const tr = document.createElement("tr");
+
+          const wn = document.createElement("td");
+          wn.className = "weekNumber";
+          wn.textContent = String(isoWeekNumber(cursor));
+          tr.appendChild(wn);
+
+          for (let i = 0; i < 7; i += 1) {
+            const d = new Date(cursor);
+            d.setDate(cursor.getDate() + i);
+
+            const td = document.createElement("td");
+            const inMonth =
+              d.getFullYear() === monthYear && d.getMonth() === monthOnly;
+            const mmdd = formatMonthDay(d);
+            const sunday = i === 6;
+
+            if (!inMonth) {
+              td.classList.add("outsideMonth");
+              td.textContent = "0";
+            } else {
+              td.textContent = String(d.getDate());
+            }
+
+            if (sunday) td.classList.add("sunday");
+            if (inMonth) {
+              const holidaysForDateYear = getHolidaySetForYear(
+                d.getFullYear(),
+                holidayByYear,
+              );
+              if (holidaysForDateYear.has(mmdd)) td.classList.add("holiday");
+            }
+
+            tr.appendChild(td);
+          }
+
+          tbody.appendChild(tr);
+          cursor.setDate(cursor.getDate() + 7);
+        }
+
+        table.appendChild(tbody);
+        return table;
+      }
+
+      function buildMonthBlock(baseYear, absoluteMonthIndex, holidayByYear) {
+        const monthRef = new Date(baseYear, absoluteMonthIndex, 1);
+        const displayYear = monthRef.getFullYear();
+        const displayMonth = monthRef.getMonth();
+
+        const section = document.createElement("section");
+        section.className = "month";
+
+        const yearLine = document.createElement("div");
+        yearLine.className = "yearLine";
+        yearLine.textContent = String(displayYear);
+
+        const title = document.createElement("div");
+        title.className = "monthTitle";
+
+        const weekLabel = document.createElement("div");
+        weekLabel.className = "weekLabel";
+        weekLabel.textContent = "Semaine";
+        title.appendChild(weekLabel);
+
+        const monthCell = document.createElement("div");
+        monthCell.className = "monthName";
+        monthCell.textContent = monthNames[displayMonth];
+        title.appendChild(monthCell);
+
+        section.appendChild(yearLine);
+        section.appendChild(title);
+        section.appendChild(
+          buildMonthTable(baseYear, absoluteMonthIndex, holidayByYear),
+        );
+        return section;
+      }
+
+      function buildCalendar(year, mode) {
+        const root = document.getElementById("calendarRoot");
+        root.innerHTML = "";
+        const holidayByYear = {};
+        const starts = [];
+
+        if (mode === "glissant") {
+          // Fevrier annee N -> janvier annee N+2 (dernier depart en novembre N+1).
+          const lastStart = GLISSANT_HORIZON_YEARS * 12 - 2;
+          for (let start = 1; start <= lastStart; start += 1) {
+            starts.push(start);
+          }
+        } else {
+          for (let start = 0; start < 12; start += 3) {
+            starts.push(start);
+          }
+        }
+
+        starts.forEach((startMonth) => {
+          const page = document.createElement("article");
+          page.className = "page";
+
+          for (let i = 0; i < 3; i += 1) {
+            page.appendChild(
+              buildMonthBlock(year, startMonth + i, holidayByYear),
+            );
+          }
+
+          root.appendChild(page);
+        });
+      }
+
+      function init() {
+        const yearInput = document.getElementById("yearInput");
+        const modeInput = document.getElementById("modeInput");
+        const now = new Date();
+        yearInput.value = String(now.getFullYear());
+
+        const params = new URLSearchParams(window.location.search);
+        const urlYear = Number(params.get("year"));
+        const urlMode = params.get("mode");
+        if (Number.isInteger(urlYear) && urlYear >= 1900 && urlYear <= 2100) {
+          yearInput.value = String(urlYear);
+        }
+        if (urlMode === "glissant" || urlMode === "trimestre") {
+          modeInput.value = urlMode;
+        }
+
+        buildCalendar(Number(yearInput.value), modeInput.value);
+
+        document.getElementById("buildBtn").addEventListener("click", () => {
+          const y = Number(yearInput.value);
+          if (!Number.isInteger(y) || y < 1900 || y > 2100) {
+            alert("Veuillez entrer une annee entre 1900 et 2100.");
+            return;
+          }
+          buildCalendar(y, modeInput.value);
+        });
+
+        document.getElementById("printBtn").addEventListener("click", () => {
+          window.print();
+        });
+      }
+
+      init();
+    </script>
+  </body>
+</html>
