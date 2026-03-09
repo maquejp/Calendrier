@@ -473,12 +473,11 @@
 
             if (!inMonth) {
               td.classList.add("outsideMonth");
-              td.textContent = "0";
+              td.textContent = "";
             } else {
               td.textContent = String(d.getDate());
+              if (sunday) td.classList.add("sunday");
             }
-
-            if (sunday) td.classList.add("sunday");
 
             tr.appendChild(td);
           }
