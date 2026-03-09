@@ -159,7 +159,7 @@
 
       .month {
         display: grid;
-        grid-template-rows: auto auto 1fr;
+        grid-template-rows: auto 1fr;
         border: 1px solid #9ca3af;
         background: rgba(255, 255, 255, 0.82);
         overflow: hidden;
@@ -168,22 +168,24 @@
       .yearLine {
         border-bottom: 1px solid #8c8c8c;
         padding: 1.8mm 2.2mm 1.2mm;
+        position: relative;
         font-size: 7.8mm;
         line-height: 1;
         font-weight: 700;
         letter-spacing: 0.03em;
       }
 
-      .monthTitle {
-        border-bottom: 1px solid #8c8c8c;
-        padding: 1.3mm 2.2mm;
-        display: flex;
-        align-items: end;
+      .yearValue {
+        display: inline-block;
       }
 
       .monthName {
+        position: absolute;
+        left: 50%;
+        bottom: 1.2mm;
+        transform: translateX(-50%);
         font-size: 6.5mm;
-        line-height: 1;
+        line-height: 0.95;
         font-weight: 700;
         white-space: nowrap;
       }
@@ -491,18 +493,18 @@
 
         const yearLine = document.createElement("div");
         yearLine.className = "yearLine";
-        yearLine.textContent = String(displayYear);
 
-        const title = document.createElement("div");
-        title.className = "monthTitle";
+        const yearCell = document.createElement("div");
+        yearCell.className = "yearValue";
+        yearCell.textContent = String(displayYear);
+        yearLine.appendChild(yearCell);
 
         const monthCell = document.createElement("div");
         monthCell.className = "monthName";
         monthCell.textContent = monthNames[displayMonth];
-        title.appendChild(monthCell);
+        yearLine.appendChild(monthCell);
 
         section.appendChild(yearLine);
-        section.appendChild(title);
         section.appendChild(buildMonthTable(baseYear, absoluteMonthIndex));
         return section;
       }
