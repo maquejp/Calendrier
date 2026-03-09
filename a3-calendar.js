@@ -166,13 +166,14 @@ function buildMonthTable(baseYear, absoluteMonthIndex, holidayByYear) {
   return table;
 }
 
-function buildMonthBlock(baseYear, absoluteMonthIndex, holidayByYear) {
+function buildMonthBlock(baseYear, absoluteMonthIndex, holidayByYear, slotIndex) {
   const monthRef = new Date(baseYear, absoluteMonthIndex, 1);
   const displayYear = monthRef.getFullYear();
   const displayMonth = monthRef.getMonth();
 
   const section = document.createElement("section");
   section.className = "month";
+  section.classList.add(slotIndex === 1 ? "month--central" : "month--side");
 
   const yearLine = document.createElement("div");
   yearLine.className = "yearLine";
@@ -218,7 +219,7 @@ function buildCalendar(year, mode, horizonYears) {
     page.className = "page";
 
     for (let i = 0; i < 3; i += 1) {
-      page.appendChild(buildMonthBlock(year, startMonth + i, holidayByYear));
+      page.appendChild(buildMonthBlock(year, startMonth + i, holidayByYear, i));
     }
 
     root.appendChild(page);

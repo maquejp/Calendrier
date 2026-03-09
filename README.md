@@ -9,6 +9,7 @@ Printable HTML calendar in A3 portrait format, with 3 months per page.
 - Two modes:
   - `glissant`: rolling 3-month pages over the selected horizon
   - `trimestre`: fixed quarters over the selected horizon
+- Subtle visual contrast between side months and the central month on each page
 - ISO week numbers
 - Sundays and Belgian legal public holidays highlighted
 - A3 print / PDF export
