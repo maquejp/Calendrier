@@ -177,17 +177,8 @@
       .monthTitle {
         border-bottom: 1px solid #8c8c8c;
         padding: 1.3mm 2.2mm;
-        display: grid;
-        grid-template-columns: 16mm 1fr;
+        display: flex;
         align-items: end;
-        gap: 3mm;
-      }
-
-      .weekLabel {
-        font-size: 2.8mm;
-        color: #444;
-        line-height: 1.12;
-        font-weight: 600;
       }
 
       .monthName {
@@ -504,11 +495,6 @@
 
         const title = document.createElement("div");
         title.className = "monthTitle";
-
-        const weekLabel = document.createElement("div");
-        weekLabel.className = "weekLabel";
-        weekLabel.textContent = "Semaine";
-        title.appendChild(weekLabel);
 
         const monthCell = document.createElement("div");
         monthCell.className = "monthName";
