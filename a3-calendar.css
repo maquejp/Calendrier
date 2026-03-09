@@ -45,6 +45,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   box-shadow: 0 10px 22px rgba(16, 42, 67, 0.28);
   animation: slideDown 500ms ease-out;
@@ -93,6 +94,13 @@ body {
 .controls button:hover {
   transform: translateY(-1px);
   filter: brightness(1.06);
+}
+
+.controlsActions {
+  flex-basis: 100%;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
 }
 
 .infoBox {
