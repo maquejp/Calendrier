@@ -5,9 +5,10 @@ Printable HTML calendar in A3 portrait format, with 3 months per page.
 ## Features
 
 - Local browser generation (no backend)
+- Start year + configurable horizon in years (default: 2)
 - Two modes:
-  - `glissant`: rolling 3-month pages over 2 years
-  - `trimestre`: fixed quarters
+  - `glissant`: rolling 3-month pages over the selected horizon
+  - `trimestre`: fixed quarters over the selected horizon
 - ISO week numbers
 - Sundays and Belgian legal public holidays highlighted
 - A3 print / PDF export
@@ -15,9 +16,17 @@ Printable HTML calendar in A3 portrait format, with 3 months per page.
 ## Usage
 
 1. Open `a3-calendar.html` in a browser.
-2. Select year and mode.
+2. Select start year, number of years, and mode.
 3. Click `Generer calendrier`.
 4. Click `Imprimer / Exporter PDF`.
+
+## URL Parameters
+
+- `year`: start year (example: `2026`)
+- `years`: number of years to generate (range: `1..20`)
+- `mode`: `glissant` or `trimestre`
+
+Example: `?year=2026&years=3&mode=glissant`
 
 ## Recommended Print Settings
 

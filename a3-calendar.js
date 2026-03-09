@@ -23,7 +23,7 @@ const weekdays = [
   "Dimanche",
 ];
 
-const GLISSANT_HORIZON_YEARS = 2;
+const DEFAULT_HORIZON_YEARS = 2;
 
 // Jours feries legaux en Belgique (fetes fixes + mobiles liees a Paques).
 function buildBelgianHolidaySet(year) {
@@ -194,20 +194,21 @@ function buildMonthBlock(baseYear, absoluteMonthIndex, holidayByYear) {
   return section;
 }
 
-function buildCalendar(year, mode) {
+function buildCalendar(year, mode, horizonYears) {
   const root = document.getElementById("calendarRoot");
   root.innerHTML = "";
   const holidayByYear = {};
   const starts = [];
+  const totalMonths = horizonYears * 12;
 
   if (mode === "glissant") {
-    // Fevrier annee N -> janvier annee N+2 (dernier depart en novembre N+1).
-    const lastStart = GLISSANT_HORIZON_YEARS * 12 - 2;
+    // Fevrier annee N -> janvier annee N+X (dernier depart en novembre N+X-1).
+    const lastStart = totalMonths - 2;
     for (let start = 1; start <= lastStart; start += 1) {
       starts.push(start);
     }
   } else {
-    for (let start = 0; start < 12; start += 3) {
+    for (let start = 0; start < totalMonths; start += 3) {
       starts.push(start);
     }
   }
@@ -226,29 +227,44 @@ function buildCalendar(year, mode) {
 
 function init() {
   const yearInput = document.getElementById("yearInput");
+  const yearsInput = document.getElementById("yearsInput");
   const modeInput = document.getElementById("modeInput");
   const now = new Date();
   yearInput.value = String(now.getFullYear());
+  yearsInput.value = String(DEFAULT_HORIZON_YEARS);
 
   const params = new URLSearchParams(window.location.search);
   const urlYear = Number(params.get("year"));
+  const urlYears = Number(params.get("years"));
   const urlMode = params.get("mode");
   if (Number.isInteger(urlYear) && urlYear >= 1900 && urlYear <= 2100) {
     yearInput.value = String(urlYear);
+  }
+  if (Number.isInteger(urlYears) && urlYears >= 1 && urlYears <= 20) {
+    yearsInput.value = String(urlYears);
   }
   if (urlMode === "glissant" || urlMode === "trimestre") {
     modeInput.value = urlMode;
   }
 
-  buildCalendar(Number(yearInput.value), modeInput.value);
+  buildCalendar(
+    Number(yearInput.value),
+    modeInput.value,
+    Number(yearsInput.value),
+  );
 
   document.getElementById("buildBtn").addEventListener("click", () => {
     const y = Number(yearInput.value);
+    const years = Number(yearsInput.value);
     if (!Number.isInteger(y) || y < 1900 || y > 2100) {
       alert("Veuillez entrer une année entre 1900 et 2100.");
       return;
     }
-    buildCalendar(y, modeInput.value);
+    if (!Number.isInteger(years) || years < 1 || years > 20) {
+      alert("Veuillez entrer un nombre d'années entre 1 et 20.");
+      return;
+    }
+    buildCalendar(y, modeInput.value, years);
   });
 
   document.getElementById("printBtn").addEventListener("click", () => {
