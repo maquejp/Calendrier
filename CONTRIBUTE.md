@@ -5,9 +5,9 @@ Thanks for your interest in this project.
 ## General Rules
 
 - Keep the project simple with a clear split between files:
-   - `a3-calendar.html` for structure
-   - `a3-calendar.css` for styles
-   - `a3-calendar.js` for behavior
+  - `a3-calendar.html` for structure
+  - `a3-calendar.css` for styles
+  - `a3-calendar.js` for behavior
 - Preserve A3 print compatibility
 - Avoid adding unnecessary external dependencies
 
