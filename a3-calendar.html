@@ -346,29 +346,29 @@
   </head>
   <body>
     <div class="controls">
-      <label for="yearInput">Annee</label>
+      <label for="yearInput">Année</label>
       <input id="yearInput" type="number" min="1900" max="2100" step="1" />
       <label for="modeInput">Mode</label>
       <select id="modeInput">
         <option value="glissant" selected>
-          3 mois glissants sur 2 ans (fev-mar-avr ... nov-dec-jan)
+          3 mois glissants sur 2 ans (fév-mar-avr ... nov-déc-jan)
         </option>
         <option value="trimestre">
           Trimestres fixes (jan-fev-mar, avr-mai-juin...)
         </option>
       </select>
-      <button id="buildBtn" type="button">Generer calendrier</button>
+      <button id="buildBtn" type="button">Générer calendrier</button>
       <button id="printBtn" type="button">Imprimer / Exporter PDF</button>
     </div>
 
     <aside class="infoBox" aria-live="polite">
       <p class="infoBoxTitle">
-        Pour un resultat parfait dans la fenetre d'impression :
+        Pour un résultat parfait dans la fenêtre d'impression :
       </p>
       <ul>
         <li>Format papier : A3</li>
         <li>Orientation : Portrait</li>
-        <li>Echelle : 100% (pas "Ajuster a la page")</li>
+        <li>Échelle : 100% (pas "Ajuster à la page")</li>
       </ul>
     </aside>
 
@@ -377,17 +377,17 @@
     <script>
       const monthNames = [
         "Janvier",
-        "Fevrier",
+        "Février",
         "Mars",
         "Avril",
         "Mai",
         "Juin",
         "Juillet",
-        "Aout",
+        "Août",
         "Septembre",
         "Octobre",
         "Novembre",
-        "Decembre",
+        "Décembre",
       ];
 
       const weekdays = [
@@ -559,7 +559,7 @@
         document.getElementById("buildBtn").addEventListener("click", () => {
           const y = Number(yearInput.value);
           if (!Number.isInteger(y) || y < 1900 || y > 2100) {
-            alert("Veuillez entrer une annee entre 1900 et 2100.");
+            alert("Veuillez entrer une année entre 1900 et 2100.");
             return;
           }
           buildCalendar(y, modeInput.value);
