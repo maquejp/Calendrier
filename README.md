@@ -27,7 +27,9 @@ Printable HTML calendar in A3 portrait format, with 3 months per page.
 
 ## Project Structure
 
-- `a3-calendar.html`: full app (HTML/CSS/JS)
+- `a3-calendar.html`: page structure and UI markup
+- `a3-calendar.css`: styles and print layout rules
+- `a3-calendar.js`: calendar generation logic and holiday rules
 
 ## License
 
