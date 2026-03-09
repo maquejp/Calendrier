@@ -161,7 +161,11 @@ body {
 }
 
 .month--side {
-  background: linear-gradient(180deg, rgba(246, 249, 253, 0.9) 0%, rgba(240, 245, 251, 0.9) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(246, 249, 253, 0.9) 0%,
+    rgba(240, 245, 251, 0.9) 100%
+  );
   border-color: #aeb8c6;
 }
 

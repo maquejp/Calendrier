@@ -166,7 +166,12 @@ function buildMonthTable(baseYear, absoluteMonthIndex, holidayByYear) {
   return table;
 }
 
-function buildMonthBlock(baseYear, absoluteMonthIndex, holidayByYear, slotIndex) {
+function buildMonthBlock(
+  baseYear,
+  absoluteMonthIndex,
+  holidayByYear,
+  slotIndex,
+) {
   const monthRef = new Date(baseYear, absoluteMonthIndex, 1);
   const displayYear = monthRef.getFullYear();
   const displayMonth = monthRef.getMonth();
